@@ -1,0 +1,19 @@
+{
+  "name": "test-dockerapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MJB-Khorasani/test-dockerapi.git"
+  },
+  "author": "MJB-Khorasani",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MJB-Khorasani/test-dockerapi/issues"
+  },
+  "homepage": "https://github.com/MJB-Khorasani/test-dockerapi#readme"
+}
