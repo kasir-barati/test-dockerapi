@@ -20,7 +20,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
+app.use('/auth', require('./routes/auth'));
 app.use('/services', require('./routes/service'));
+app.use(require('./middlewares/send-response'));
 app.use(require('./middlewares/404'));
 app.use(require('./middlewares/500'));
 
