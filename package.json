@@ -19,6 +19,7 @@
   "homepage": "https://github.com/MJB-Khorasani/test-dockerapi#readme",
   "dependencies": {
     "axios": "^0.20.0",
+    "cors": "^2.8.5",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "formidable": "^1.2.2"
