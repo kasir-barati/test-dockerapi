@@ -1,5 +1,5 @@
 module.exports = class ErrorResponse extends Error {
-    constructor(name, message, status) {
+    constructor(name, message, statusCode) {
         super(message);
         this.name = name;
         this.statusCode = statusCode;

@@ -3,7 +3,6 @@ const path = require('path');
 
 const formidable = require('formidable');
 
-const User = require('../models/user');
 const dockerService = require('../services/docker');
 
 module.exports.servicesList = async (req, res, next) => {
@@ -17,10 +16,9 @@ module.exports.servicesList = async (req, res, next) => {
 module.exports.createBaseImageService = async (req, res, next) => {
     let { userId } = req;
     let { imageName, imageVersion, cpu, ram, storage } = req.body;
-    let user = await User.findByPk(userId);
-    let serviceId = await dockerService.createBaseImageService(imageName, imageVersion, cpu, ram, storage, user.networkId);
+    // let serviceId = await dockerService.createBaseImageService(imageName, imageVersion, cpu, ram, storage, user.networkId);
 
-    req.apiData = serviceId;
+    // req.apiData = serviceId;
     req.apiError = null;
     req.apiStatus = 200;
     next();

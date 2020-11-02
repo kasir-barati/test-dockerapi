@@ -38,7 +38,7 @@ module.exports.servicesList = async () => {
             // service.Spec.TaskTemplate.Resources.Limits.MemoryBytes;
         };
         return response.status === 200 ? response.data : null;
-    } catch(error) {
+    } catch (error) {
         throw new ErrorResponse('DockerError', error.message, error.response.status)
     };
 };
@@ -48,7 +48,7 @@ module.exports.createBaseImageService = async (imageName, imageVersion, cpu, ram
         let targetPort, nodeHostname;
         let json = fsPromises.readFile(path.join(__dirname, '..', '..', 'docker', 'json', 'service.json'), 'utf8');
 
-        json = JSON.parse(serviceJson);
+        json = JSON.parse(json);
 
         switch (imageName) {
             case 'wordpress':
@@ -79,16 +79,72 @@ module.exports.createBaseImageService = async (imageName, imageVersion, cpu, ram
             //     break;
         };
 
-        serviceJson.Networks[0].Target = networkId;
-        serviceJson.TaskTemplate.ContainerSpec.Env = env;
-        serviceJson.TaskTemplate.ContainerSpec.Hostname = name;
-        serviceJson.EndpointSpec.Ports[0].TargetPort = targetPort;
-        serviceJson.TaskTemplate.ContainerSpec.Mounts[0].Source = volumeName;
-        serviceJson.Placement.Constaints = [`node.hostname==${nodeHostname}`];
-        serviceJson.TaskTemplate.Resources.Limits.NanoCPUs = cpu * 1_000_000_000;
-        serviceJson.TaskTemplate.Resources.Limits.MemoryBytes = ram * 1_073_741_824;
-        serviceJson.TaskTemplate.ContainerSpec.Image = `${imageName}:${imageVersion}`;
+        json.Networks[0].Target = networkId;
+        json.TaskTemplate.ContainerSpec.Env = env;
+        json.TaskTemplate.ContainerSpec.Hostname = name;
+        json.EndpointSpec.Ports[0].TargetPort = targetPort;
+        json.TaskTemplate.ContainerSpec.Mounts[0].Source = volumeName;
+        json.Placement.Constaints = [`node.hostname==${nodeHostname}`];
+        json.TaskTemplate.Resources.Limits.NanoCPUs = cpu * 1_000_000_000;
+        json.TaskTemplate.Resources.Limits.MemoryBytes = ram * 1_073_741_824;
+        json.TaskTemplate.ContainerSpec.Image = `${imageName}:${imageVersion}`;
 
-        let response = await axios.post('/services/create', );
-    } catch(error) {};
+        let response = await axios.post('/services/create', json);
+    } catch (error) { 
+        throw new ErrorResponse('DockerError', error.message, error.response.status);
+    };
+};
+
+module.exports.networksList = async () => {
+    try {
+        let response = await axios.get('/networks');
+        return response.status === 200 ? response.data : null;
+    } catch (error) {
+        throw new ErrorResponse('DockerError', error.message, error.response.status);
+    };
+};
+
+module.exports.createNetwork = async (name, driver, internal, attachable) => {
+    try {
+        let json = {
+            Name: name,
+            Driver: driver,
+            Ingress: false,
+            EnableIPv6: false,
+            Internal: internal,
+            CheckDuplicate: true,
+            Attachable: attachable,
+        };
+        let response = await axios.post('/networks/create', json);
+        return response.status === 201 ? response.data.Id : null;
+    } catch (error) {
+        throw new ErrorResponse('DockerError', error.message, error.response.status);
+    };
+};
+
+module.exports.inspectNetwork = async id => {
+    try {
+        let containersId = [];
+        let response = await axios.get(`/networks/${id}`);
+        
+        delete response.data.IPAM;
+        delete response.data.Options;
+        delete response.data.Labels;
+        for (let containerId in response.data.Containers) {
+            containersId.push(containerId);
+        };
+        response.data.Containers = containersId;
+        
+        return response.status === 200 ? response.data : null;
+    } catch (error) {
+        throw new ErrorResponse('DockerError', error.message, error.response.status);
+    };
+};
+
+module.exports.removeNetwork = async id => {
+    try {
+        return await axios.delete(`/networks/${id}`);
+    } catch (error) {
+        throw new ErrorResponse('DockerError', error.message, error.response.status);
+    };
 };
