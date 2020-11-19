@@ -19,7 +19,7 @@ Network.init({
     networkAttachable: DataTypes.BOOLEAN,
     networkIngress: DataTypes.BOOLEAN,
     networkContainers: DataTypes.ARRAY(DataTypes.STRING),
-    userId: DataTypes.UUID
+    userId: DataTypes.INTEGER // UUID
 }, {
     paranoid: true,
     timestamps: true,

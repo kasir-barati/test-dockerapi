@@ -90,7 +90,7 @@ module.exports.createBaseImageService = async (imageName, imageVersion, cpu, ram
         json.TaskTemplate.ContainerSpec.Image = `${imageName}:${imageVersion}`;
 
         let response = await axios.post('/services/create', json);
-    } catch (error) { 
+    } catch (error) {
         throw new ErrorResponse('DockerError', error.message, error.response.status);
     };
 };
@@ -126,7 +126,7 @@ module.exports.inspectNetwork = async id => {
     try {
         let containersId = [];
         let response = await axios.get(`/networks/${id}`);
-        
+
         delete response.data.IPAM;
         delete response.data.Options;
         delete response.data.Labels;
@@ -134,7 +134,7 @@ module.exports.inspectNetwork = async id => {
             containersId.push(containerId);
         };
         response.data.Containers = containersId;
-        
+
         return response.status === 200 ? response.data : null;
     } catch (error) {
         throw new ErrorResponse('DockerError', error.message, error.response.status);
@@ -143,7 +143,50 @@ module.exports.inspectNetwork = async id => {
 
 module.exports.removeNetwork = async id => {
     try {
-        return await axios.delete(`/networks/${id}`);
+        return (await axios.delete(`/networks/${id}`)).data;
+    } catch (error) {
+        throw new ErrorResponse('DockerError', error.message, error.response.status);
+    };
+};
+
+module.exports.removeImage = async id => {
+    try {
+        return (await axios.delete(`/images/${id}`)).data;
+    } catch (error) {
+        throw new ErrorResponse('DockerError', error.message, error.response.status);
+    };
+};
+
+module.exports.inspectImage = async id => {
+    try {
+        let response = await axios.get(`/images/${id}/json`);
+
+        return response.data;
+    } catch (error) {
+        if (err.code === 'ECONNREFUSED') {};
+        throw new ErrorResponse('DockerError', error.message, error.response.status);
+    };
+};
+
+module.exports.buildImage = async (dockerfileUrl, repoTag) => {
+    try {
+        let response = await axios.post('/build', {
+            params: {
+                remote: dockerfileUrl,
+                t: repoTag
+            }
+        });
+        return response.data;
+    } catch (error) {
+        if (err.code === 'ECONNREFUSED') {};
+        throw new ErrorResponse('DockerError', error.message, error.response.status);
+    };
+};
+
+module.exports.pruneImages = async () =>  {
+    try {
+        let response = await axios.post('/images/prune');
+        return response.data;
     } catch (error) {
         throw new ErrorResponse('DockerError', error.message, error.response.status);
     };

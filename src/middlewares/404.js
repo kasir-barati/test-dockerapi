@@ -17,6 +17,7 @@ module.exports = (req, res, next) => {
             apiStatus: 404,
             apiError: 'page not found'
         });
+    } else {
+        next();
     };
-    next();
 };

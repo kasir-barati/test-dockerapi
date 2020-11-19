@@ -3,6 +3,7 @@ const path = require('path');
 require('dotenv').config({
     path: path.join(__dirname, '..', '.env')
 });
+require('./configs/unhandled-errors')();
 
 const cors = require('cors');
 const express = require('express');
@@ -25,6 +26,7 @@ app.use(require('./middlewares/logger'));
 
 app.use('/networks', require('./routes/network'));
 app.use('/services', require('./routes/service'));
+app.use('/images', require('./routes/image'));
 app.use(require('./middlewares/404'));
 app.use(require('./middlewares/send-response'));
 app.use(require('./middlewares/500'));

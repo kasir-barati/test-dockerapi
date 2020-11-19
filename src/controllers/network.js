@@ -2,7 +2,7 @@ const Network = require('../models/network');
 const sequelize = require('../configs/sequelize');
 const dockerService = require('../services/docker');
 
-module.exports.networksList = async (req, res, next) => {
+module.exports.list = async (req, res, next) => {
     let { userId } = req.body;
     let networks = await Network.findAll({
         where: {
@@ -16,7 +16,7 @@ module.exports.networksList = async (req, res, next) => {
     next();
 };
 
-module.exports.inspectNetwork = async (req, res, next) => {
+module.exports.inspect = async (req, res, next) => {
     let { id } = req.params;
     let network = await Network.findByPk(id);
     
@@ -26,7 +26,7 @@ module.exports.inspectNetwork = async (req, res, next) => {
     next();
 };
 
-module.exports.createNetwork = async (req, res, next) => {
+module.exports.create = async (req, res, next) => {
     let { name, driver, internal, attachable, userId } = req.body;
     let networkId = await dockerService.createNetwork(name, driver, internal, attachable);
     let inspectNetwork = await dockerService.inspectNetwork(networkId);
@@ -53,7 +53,7 @@ module.exports.createNetwork = async (req, res, next) => {
     next();
 };
 
-module.exports.removeNetwork = async (req, res, next) => {
+module.exports.remove = async (req, res, next) => {
     let { id } = req.params;
     let { userId } = req.body;
     let network = await Network.findOne({

@@ -6,15 +6,15 @@ const { middlewareHandler } = require('../utils/promise');
 // /networks
 router
     .route('/')
-    .get(middlewareHandler(networkController.networksList))
-    .post(middlewareHandler(networkController.createNetwork));
+    .get(middlewareHandler(networkController.list))
+    .post(middlewareHandler(networkController.create));
     
 router
     .route('/:id')
-    .get(middlewareHandler(networkController.inspectNetwork))
+    .get(middlewareHandler(networkController.inspect))
 
 router
     .route('/:id')
-    .delete(middlewareHandler(networkController.removeNetwork));
+    .delete(middlewareHandler(networkController.remove));
 
 module.exports = router;

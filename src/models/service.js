@@ -26,7 +26,8 @@ Service.init({
         defaultValue: 'accepted',
         type: DataTypes.ENUM('shutodwn', 'running', 'accepted', 'failed', 'freeze')
     },
-    price: DataTypes.STRING
+    price: DataTypes.STRING,
+    userId: DataTypes.NUMBER // UUID
 }, {
     paranoid: true,
     timestamps: true,
